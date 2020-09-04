@@ -7,6 +7,13 @@ class User:
         self.id = vk_id
         self.friend_list = []
 
+    def __and__(self, other_user):
+        common_friends = []
+        for friend in self.friend_list:
+            if friend in other_user.friend_list:
+                common_friends.append(User(friend))
+        return common_friends
+
     def get_friends(self):
         URL = f"https://api.vk.com/method/friends.get"
         PARAMETERS = {
@@ -18,31 +25,21 @@ class User:
         url_requests = "?".join((URL, urlencode(PARAMETERS)))
         # print(url_requests)
         resp = requests.get(url_requests)
+        # print(resp.json())
         self.friend_list = resp.json()["response"]["items"]
         return self.friend_list
 
-    # def print(self):
-    #     return print(f'https://vk.com/id{self.id}')
-
-
-def get_common_friends(user_name_1, user_name_2):
-    common_friends = {}
-    for friend in user_name_1.friend_list:
-        if friend in user_name_2.friend_list:
-            common_friends[f'https://vk.com/id{friend}'] = User(friend)
-    print(common_friends)
-
 
 def user_input():
-    users_dict = {}
     ids = input('Введите id пользователей VK через пробел, для которых необходимо найти общих друзей\n').split()
-    for number, user_id in enumerate(ids):
-        users_dict[f"user_{number}"] = User(user_id)
-    # print(users_dict)
-    for vk_user in users_dict.values():
-        vk_user.get_friends()
-        # vk_user.print()
-    get_common_friends(*users_dict.values())
+    user_0 = User(ids[0])
+    user_1 = User(ids[1])
+    user_0.get_friends()
+    user_1.get_friends()
+    common_friends = user_0 & user_1
+    print(common_friends)
+    print(common_friends[0].id)
+    print(f"https://vk.com/id{common_friends[0].id}")
 
 
 user_input()
