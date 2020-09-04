@@ -14,6 +14,9 @@ class User:
                 common_friends.append(User(friend))
         return common_friends
 
+    def __str__(self):
+        return 'https://vk.com/id{}'.format(self.id)
+
     def get_friends(self):
         URL = f"https://api.vk.com/method/friends.get"
         PARAMETERS = {
@@ -23,9 +26,7 @@ class User:
             "v": 5.122
         }
         url_requests = "?".join((URL, urlencode(PARAMETERS)))
-        # print(url_requests)
         resp = requests.get(url_requests)
-        # print(resp.json())
         self.friend_list = resp.json()["response"]["items"]
         return self.friend_list
 
@@ -37,9 +38,7 @@ def user_input():
     user_0.get_friends()
     user_1.get_friends()
     common_friends = user_0 & user_1
-    print(common_friends)
-    print(common_friends[0].id)
-    print(f"https://vk.com/id{common_friends[0].id}")
+    print(common_friends[0])
 
 
 user_input()
